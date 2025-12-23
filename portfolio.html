@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Premium Portfolio - Modern & Dynamic</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Material+Icons" rel="stylesheet">
+  <style>
+    /* Reset & base */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0; 
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      transition: background-color 0.4s ease;
+    }
+    :root {
+      --primary-gradient: linear-gradient(135deg, #6366f1, #06b6d4);
+      --primary-color: #60a5fa;
+      --secondary-color: #0e7490;
+      --background-glass: rgba(33, 47, 60, 0.7);
+      --shadow-color: rgba(0, 0, 0, 0.45);
+      --accent-color: #14b8a6;
+      --text-light: #e2e8f0;
+      --text-muted: #94a3b8;
+      --border-radius: 12px;
+      --header-height: 64px;
+      --sidebar-width: 280px;
+      --toast-duration: 3200ms;
+    }
+    /* Dark Mode -- alternate colors */
+    body[data-theme="dark"] {
+      background: linear-gradient(135deg, #111827 0%, #000000 100%);
+      color: #cbd5e1;
+    }
+    body[data-theme="dark"] header,
+    body[data-theme="dark"] footer {
+      background: rgba(22, 46, 62, 0.75);
+    }
+    body[data-theme="dark"] .sidebar {
+      background: rgba(22, 46, 62, 0.85);
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #6366f1aa;
+      border-radius: 10px;
+      transition: background-color 0.3s ease;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #6366f1cc;
+    }
+
+    /* Layout containers */
+    #app {
+      display: flex;
+      flex-grow: 1;
+      height: calc(100vh - var(--header-height) - 48px);
+      max-height: calc(100vh - var(--header-height) - 48px);
+      overflow: hidden;
+      background: var(--background-glass);
+      backdrop-filter: blur(16px) saturate(180%);
+      border-radius: 16px;
+      margin: 24px;
+      box-shadow: 0 12px 36px var(--shadow-color);
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      height: var(--header-height);
+      width: 100%;
+      background: var(--background-glass);
+      backdrop-filter: saturate(180%) blur(20px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      box-shadow: 0 2px 12px var(--shadow-color);
+      z-index: 1000;
+      border-bottom: 1px solid #47556980;
+      user-select: none;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      font-size: clamp(1.4rem, 1.4vw + 0.25rem, 1.8rem);
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      cursor: default;
+    }
+    .brand-icon {
+      font-family: 'Material Icons';
+      font-size: 36px;
+      color: #6366f1;
+      user-select: none;
+    }
+    nav.nav-main {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+    nav.nav-main a {
+      position: relative;
+      color: var(--text-light);
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 1rem;
+      padding: 8px;
+      border-radius: 8px;
+      transition: background-color 0.25s ease, box-shadow 0.3s ease;
+    }
+    nav.nav-main a:hover,
+    nav.nav-main a:focus-visible {
+      background: var(--primary-gradient);
+      box-shadow: 0 5px 12px #6366f1aa;
+      outline: none;
+      color: white;
+    }
+
+    /* Header User Controls */
+    .header-controls {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    button#toggle-theme {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--primary-color);
+      font-family: 'Material Icons';
+      font-size: 28px;
+      transition: color 0.3s ease;
+    }
+    button#toggle-theme:hover,
+    button#toggle-theme:focus-visible {
+      color: var(--accent-color);
+      outline: none;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--background-glass);
+      backdrop-filter: saturate(180%) blur(16px);
+      border-right: 1px solid #47556980;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 16px;
+      gap: 24px;
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+      user-select: none;
+      overflow-y: auto;
+    }
+    /* Slide-out for mobile */
+    .sidebar.mobile-closed {
+      transform: translateX(-100%);
+      position: fixed;
+      top: var(--header-height);
+      left: 0;
+      height: calc(100vh - var(--header-height));
+      z-index: 1200;
+      box-shadow: 8px 0 28px var(--shadow-color);
+      border-right: none;
+      border-radius: 0 16px 16px 0;
+    }
+
+    /* Sidebar Heading */
+    .sidebar h2 {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--primary-color);
+      margin: 0 0 8px 0;
+      user-select: text;
+    }
+
+    /* Sidebar nav links */
+    .sidebar nav {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .sidebar nav button {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: transparent;
+      border: none;
+      color: var(--text-light);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
+    }
+    .sidebar nav button:focus-visible {
+      outline: 3px solid var(--primary-color);
+      outline-offset: 2px;
+      background: #6366f1aa;
+    }
+    .sidebar nav button:hover {
+      background: var(--primary-gradient);
+      box-shadow: 0 6px 18px #6366f1bb;
+    }
+    .sidebar nav button .material-icons {
+      font-size: 20px;
+    }
+    /* Notification badge */
+    .notification-badge {
+      margin-left: auto;
+      background-color: #ef4444;
+      color: white;
+      font-size: 0.75rem;
+      padding: 2px 6px;
+      border-radius: 12px;
+      font-weight: 700;
+      min-width: 24px;
+      text-align: center;
+      user-select: none;
+      box-shadow: 0 0 6px #ef4444cc;
+    }
+
+    /* Main content */
+    main#main-content {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 32px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+      min-height: calc(100vh - var(--header-height) - 48px);
+    }
+    main#main-content > section {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    /* Section titles */
+    h1.section-title {
+      font-size: clamp(2rem, 3vw + 0.5rem, 3rem);
+      font-weight: 800;
+      margin-bottom: 24px;
+      color: var(--primary-color);
+      text-align: center;
+      user-select: text;
+    }
+
+    /* Search bar */
+    .search-container {
+      max-width: 600px;
+      margin: 0 auto 48px auto;
+      display: flex;
+      position: relative;
+    }
+    .search-container input[type="search"] {
+      width: 100%;
+      padding: 14px 48px 14px 16px;
+      border: none;
+      border-radius: 32px;
+      font-size: 1rem;
+      font-weight: 500;
+      background: var(--background-glass);
+      color: var(--text-light);
+      box-shadow: inset 0 2px 8px #0e1726bb;
+      transition: box-shadow 0.3s ease;
+      backdrop-filter: saturate(180%) blur(12px);
+      user-select: text;
+    }
+    .search-container input[type="search"]:focus {
+      outline: none;
+      box-shadow: 0 0 12px 2px #6366f1cc;
+      background: var(--background-glass);
+    }
+    .search-icon {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Material Icons';
+      font-size: 24px;
+      color: var(--primary-color);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* Portfolio grid */
+    .portfolio-grid {
+      display: grid;
+      gap: 32px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      user-select: none;
+    }
+    .portfolio-item {
+      background: var(--background-glass);
+      border-radius: var(--border-radius);
+      padding: 24px;
+      box-shadow: 0 8px 20px var(--shadow-color);
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      transition: transform 0.3s cubic-bezier(0.3,0,0,1), box-shadow 0.3s cubic-bezier(0.3,0,0,1);
+    }
+    .portfolio-item:hover,
+    .portfolio-item:focus-visible {
+      outline: none;
+      transform: translateY(-8px) scale(1.05);
+      box-shadow: 0 20px 46px #6366f1cc;
+    }
+
+    /* Portfolio image */
+    .portfolio-image {
+      width: 100%;
+      height: 160px;
+      background-size: cover;
+      background-position: center;
+      border-radius: var(--border-radius);
+      margin-bottom: 20px;
+      position: relative;
+      filter: drop-shadow(0 2px 4px #0005);
+      transition: filter 0.3s ease;
+    }
+    .portfolio-item:hover .portfolio-image {
+      filter: drop-shadow(0 8px 12px #6366f1cc);
+    }
+
+    /* Portfolio text */
+    .portfolio-title {
+      font-weight: 700;
+      font-size: 1.25rem;
+      margin-bottom: 8px;
+      color: var(--primary-color);
+    }
+    .portfolio-description {
+      color: var(--text-muted);
+      flex-grow: 1;
+    }
+    .portfolio-tags {
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .portfolio-tag {
+      background: #4ade80;
+      color: #064e3b;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      user-select: text;
+      cursor: default;
+      transition: background-color 0.3s ease;
+      white-space: nowrap;
+    }
+    .portfolio-tag:hover {
+      background: #22c55e;
+    }
+
+    /* Footer */
+    footer {
+      height: 48px;
+      background: var(--background-glass);
+      backdrop-filter: saturate(180%) blur(20px);
+      border-top: 1px solid #47556980;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      user-select: none;
+      flex-shrink: 0;
+      position: sticky;
+      bottom: 0;
+      z-index: 1000;
+    }
+    .footer-social-icons {
+      display: flex;
+      gap: 24px;
+    }
+    .footer-social-icons a {
+      color: var(--text-muted);
+      font-family: 'Material Icons';
+      font-size: 24px;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .footer-social-icons a:hover,
+    .footer-social-icons a:focus-visible {
+      color: var(--primary-color);
+      outline: none;
+    }
+
+    /* Toast Notification */
+    #toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 2000;
+    }
+    .toast {
+      background: var(--background-glass);
+      backdrop-filter: saturate(180%) blur(20px);
+      color: #d1d5db;
+      padding: 12px 20px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 20px var(--shadow-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      user-select: none;
+      animation: slideInRight 0.4s cubic-bezier(0.4,0,0.2,1);
+    }
+    .toast .material-icons {
+      font-size: 24px;
+      color: #60a5fa;
+    }
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* Responsive - mobile first */
+    @media (max-width: 639px) {
+      #app {
+        margin: 16px 8px 80px 8px;
+        height: auto;
+        flex-direction: column;
+        max-height: none;
+        border-radius: 12px;
+      }
+      .sidebar {
+        position: fixed;
+        top: var(--header-height);
+        bottom: 0;
+        left: 0;
+        width: var(--sidebar-width);
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+        z-index: 2000;
+        border-radius: 0 16px 16px 0;
+        padding-top: 40px;
+        box-shadow: 8px 0 28px var(--shadow-color);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      main#main-content {
+        overflow: visible;
+        padding: 16px 16px 80px 16px;
+        height: auto;
+        min-height: auto;
+      }
+      nav.nav-main {
+        display: none;
+      }
+      button#sidebar-toggle {
+        display: inline-flex;
+        background: transparent;
+        border: none;
+        color: var(--primary-color);
+        font-family: 'Material Icons';
+        font-size: 32px;
+        cursor: pointer;
+        user-select: none;
+        margin-right: 12px;
+        transition: color 0.3s ease;
+      }
+      button#sidebar-toggle:hover,
+      button#sidebar-toggle:focus-visible {
+        color: var(--accent-color);
+        outline: none;
+      }
+    }
+    @media (min-width: 640px) and (max-width: 1023px) {
+      #app {
+        margin: 24px 24px 24px 24px;
+        flex-direction: row;
+        height: calc(100vh - var(--header-height) - 48px);
+      }
+      .sidebar {
+        width: 280px;
+        position: static;
+        transform: none !important;
+        height: auto !important;
+        box-shadow: none;
+        border-radius: var(--border-radius);
+        padding: 24px 16px;
+        user-select: none;
+      }
+      nav.nav-main {
+        display: flex;
+      }
+      button#sidebar-toggle {
+        display: none;
+      }
+      main#main-content {
+        padding: 32px 40px;
+        height: calc(100vh - var(--header-height) - 48px);
+        overflow-y: auto;
+      }
+    }
+    @media (min-width: 1024px) {
+      #app {
+        margin: 24px 64px 24px 64px;
+        flex-direction: row;
+        height: calc(100vh - var(--header-height) - 48px);
+      }
+      .sidebar {
+        width: 280px;
+        position: static;
+        transform: none !important;
+        height: auto !important;
+        box-shadow: none;
+        border-radius: var(--border-radius);
+        padding: 32px 24px;
+      }
+      nav.nav-main {
+        display: flex;
+      }
+      button#sidebar-toggle {
+        display: none;
+      }
+      main#main-content {
+        padding: 48px 48px;
+        height: calc(100vh - var(--header-height) - 48px);
+        overflow-y: auto;
+      }
+    }
+    /* Contact Form Styles */
+#contact-form {
+  background: var(--background-glass);
+  border-radius: var(--border-radius);
+  padding: 24px;
+  box-shadow: 0 8px 20px var(--shadow-color);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#contact-form label {
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+#contact-form input,
+#contact-form textarea {
+  padding: 12px 16px;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-light);
+  font-size: 1rem;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+#contact-form input:focus,
+#contact-form textarea:focus {
+  outline: none;
+  border-color: var(--primary-gradient);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+#contact-form .error-message {
+  color: #ef4444;
+  font-size: 0.875rem;
+  height: 1.25rem; /* Ensures consistent spacing */
+}
+
+#contact-form button {
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  background: var(--primary-gradient);
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#contact-form button:hover,
+#contact-form button:focus-visible {
+  background: #4f46e5; /* Darker shade for hover */
+  transform: translateY(-2px);
+  outline: none;
+}
+
+  </style>
+</head>
+<body>
+
+<header role="banner" aria-label="Main header">
+  <div class="brand" aria-label="Brand Identity">
+    <span class="brand-icon material-icons" aria-hidden="true">dashboard</span>
+    <span>MyPortfolio</span>
+  </div>
+  <nav class="nav-main" role="navigation" aria-label="Primary site navigation">
+    <a href="#about" tabindex="0">About</a>
+    <a href="#projects" tabindex="0">Projects</a>
+    <a href="#contact" tabindex="0">Contact</a>
+  </nav>
+  <div class="header-controls">
+    <button id="sidebar-toggle" aria-label="Toggle sidebar navigation" aria-expanded="false" aria-controls="sidebar" title="Open menu">
+      menu
+    </button>
+    <button id="toggle-theme" aria-label="Toggle dark and light theme" title="Toggle theme">wb_sunny</button>
+  </div>
+</header>
+
+<div id="app" role="main">
+  <aside class="sidebar mobile-closed" id="sidebar" role="navigation" aria-label="Sidebar navigation">
+    <style>
+        .brand {
+            font-size: clamp(1rem, 1vw + 0.2rem, 1.2rem);
+            gap: 8px;
+        }
+        .brand-icon {
+            font-size: 26px;
+        }
+        .sidebar h2 {
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+        .sidebar {
+            width: 180px;
+            padding: 12px 8px;
+            gap: 12px;
+            min-width: 120px;
+            font-size: 0.95rem;
+        }
+        .sidebar nav button {
+            font-size: 0.95rem;
+            padding: 8px 10px;
+            gap: 8px;
+        }
+        .sidebar nav button .material-icons {
+            font-size: 16px;
+        }
+        .notification-badge {
+            font-size: 0.7rem;
+            min-width: 18px;
+            padding: 1px 4px;
+        }
+        @media (max-width: 639px) {
+            .sidebar {
+                width: 150px;
+                padding-top: 24px;
+            }
+        }
+    </style>
+    <h2>Menu</h2>
+    <nav aria-label="Sidebar navigation links">
+      <button data-section="about" tabindex="0" aria-label="Go to About section">
+        <span class="material-icons" aria-hidden="true">person</span> About
+      </button>
+      <button data-section="projects" tabindex="0" aria-label="Go to Projects section">
+        <span class="material-icons" aria-hidden="true">work_outline</span> Projects
+        <span class="notification-badge" aria-label="New projects">3</span>
+      </button>
+      <button data-section="contact" tabindex="0" aria-label="Go to Contact section">
+        <span class="material-icons" aria-hidden="true">mail_outline</span> Contact
+      </button>
+    </nav>
+  </aside>
+
+  <main id="main-content" tabindex="-1">
+<section id="about" tabindex="0" aria-label="About Me section">
+  <h1 class="section-title">About Me</h1>
+  <p style="font-size:1.15rem; line-height:1.7; color:#cbd5e1; font-weight:500; margin-bottom:16px;">
+    Welcome! I'm a creative software engineer blending code and design to build visually stunning, high-performance web experiences. My passion lies in transforming complex ideas into elegant, intuitive interfaces that engage and inspire users.
+  </p>
+  
+  <p style="font-size:1.05rem; color:#a5b4fc; margin-bottom:16px;">
+    </p>
+  <div style="display: flex; align-items: center; gap: 24px; margin-top: 20px; user-select: none; flex-wrap: wrap;">
+    <img
+      loading="lazy"
+      width="480"
+      height="270"
+      
+      src="https://raw.githubusercontent.com/Siva8978-s/my-images/main/1711076766999.jpg"
+      alt="Portrait photo of a confident software engineer"
+      onmouseover="this.style.transform='scale(1.1)'; this.style.transition='transform 0.5s cubic-bezier(0.4,0,0.2,1)';"
+      onmouseout="this.style.transform='scale(1)';"
+      style="border-radius: 16px; box-shadow: 0 8px 24px rgba(99,102,241,0.5); width: 500px; height: 300;  object-fit: cover; object-position: center;"
+
+    />
+    <!-- Include Google Fonts in the <head> section of your HTML -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&family=Montserrat:wght@600&family=Poppins:wght@900&display=swap" rel="stylesheet">
+
+<div aria-label="Name beside portrait" 
+    style="
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 1), rgba(30, 241, 102, 1));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+      transition: transform 0.3s ease, text-shadow 0.3s ease;
+      user-select: text;
+      white-space: nowrap;
+      position: relative;
+      overflow: hidden;
+      padding: 10px;
+      margin-left: 3cm;
+      display: inline-block;
+    "
+    onmouseover="this.style.transform='scale(1.1)'; this.style.textShadow='0 0 20px rgba(99, 102, 241, 0.7)';"
+    onmouseout="this.style.transform='scale(1)'; this.style.textShadow='0 0 10px rgba(99, 102, 241, 0.5)';">
+      SIVA KORUKONDA
+</div>
+
+
+<style>
+  /* Updated hover effect matching P2 style */
+  div[aria-label="Name beside portrait"]:hover {
+    text-shadow: 0 0 20px rgba(99, 102, 241, 0.8);
+    transform: scale(1.05);
+  }
+</style>
+
+  </div>
+</section>
+<section id="skills" style="padding: 4rem 2rem; max-width: 1200px; margin: 0 auto;">
+  <h1 style="font-size: 2.5rem; margin-bottom: 1rem; text-align: center; color: #e2e8f0;">Skills</h1>
+  <div class="skills" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin-top: 2rem;">
+    <div class="skill" style="background: rgba(30, 41, 59, 0.7); border: 2px solid rgba(99, 102, 241, 0.5); border-radius: 12px; padding: 1.5rem; transition: all 0.3s ease; cursor: pointer;" 
+         onmouseover="this.style.background='rgba(99, 102, 241, 0.7)'; this.style.boxShadow='0 10px 30px rgba(99, 102, 241, 0.5)';" 
+         onmouseout="this.style.background='rgba(30, 41, 59, 0.7)'; this.style.boxShadow='none';">
+      C, Python, HTML, CSS, JavaScript
+    </div>
+    <div class="skill" style="background: rgba(30, 41, 59, 0.7); border: 2px solid rgba(99, 102, 241, 0.5); border-radius: 12px; padding: 1.5rem; transition: all 0.3s ease; cursor: pointer;" 
+         onmouseover="this.style.background='rgba(99, 102, 241, 0.7)'; this.style.boxShadow='0 10px 30px rgba(99, 102, 241, 0.5)';" 
+         onmouseout="this.style.background='rgba(30, 41, 59, 0.7)'; this.style.boxShadow='none';">
+      React.js
+    </div>
+    <div class="skill" style="background: rgba(30, 41, 59, 0.7); border: 2px solid rgba(99, 102, 241, 0.5); border-radius: 12px; padding: 1.5rem; transition: all 0.3s ease; cursor: pointer;" 
+         onmouseover="this.style.background='rgba(99, 102, 241, 0.7)'; this.style.boxShadow='0 10px 30px rgba(99, 102, 241, 0.5)';" 
+         onmouseout="this.style.background='rgba(30, 41, 59, 0.7)'; this.style.boxShadow='none';">
+      GitHub, Canva
+    </div>
+  </div>
+</section>
+<!-- Include Google Fonts in the head -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+
+    <section id="projects" tabindex="0" aria-label="Portfolio projects section">
+      <h1 class="section-title">My Projects</h1>
+      <div class="search-container" role="search" aria-label="Search portfolio projects">
+        <input type="search" id="project-search" name="project-search" placeholder="Search projects..." aria-describedby="search-desc" />
+        <span class="search-icon material-icons" aria-hidden="true">search</span>
+      </div>
+      <div class="portfolio-grid" id="portfolio-grid" aria-live="polite" aria-relevant="additions removals">
+        <!-- Projects dynamically rendered here -->
+      </div>
+    </section>
+
+<section id="projects" tabindex="0" aria-label="Portfolio projects section">
+      <h1 class="section-title">My Recent Projects</h1>
+      <div class="portfolio-grid" id="dashboard-portfolio-grid" aria-live="polite" aria-relevant="additions removals">
+        <!-- Main Project -->
+        <div class="portfolio-item" tabindex="0" aria-label="Project: PG Hostel Listing Portal">
+          <div class="portfolio-image" style="background-image: url('https://placehold.co/320x180/6366f1/ffffff?text=PG+Hostel+Listing');"></div>
+          <h2 class="portfolio-title">PG Hostel Listing Portal</h2>
+          <p class="portfolio-description">A React-based portal to list PGs for students. Features filters by location, rent, and availability. Responsive design with booking functionality.</p>
+          <div class="portfolio-tags">
+            <span class="portfolio-tag">React.js</span>
+            <span class="portfolio-tag">Tailwind CSS</span>
+            <span class="portfolio-tag">JSON</span>
+            <a href="https://sivapg1main.vercel.app/" target="_blank" rel="noopener" class="portfolio-tag" style="background:#6366f1;color:#fff;text-decoration:none;font-weight:600;">
+              Live Demo
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Secondary Projects Section -->
+      <h1 class="section-title">My Other Projects</h1>
+      <div class="portfolio-grid" id="portfolio-grid" aria-live="polite" aria-relevant="additions removals">
+        <div class="portfolio-item" tabindex="0" aria-label="Project: Learning Path">
+          <div class="portfolio-image" style="background-image: url('https://placehold.co/320x180/ffcc00/ffffff?text=Learning+Path');"></div>
+          <h2 class="portfolio-title">Learning Path</h2>
+          <p class="portfolio-description">A simple weather application built with JavaScript and OpenWeather API. Users can search for current weather conditions in any city.</p>
+          <div class="portfolio-tags">
+            <span class="portfolio-tag">JavaScript</span>
+            <span class="portfolio-tag">HTML</span>
+            <span class="portfolio-tag">CSS</span>
+            <a href="https://career-navigator1.vercel.app/" target="_blank" rel="noopener" class="portfolio-tag" style="background:#6366f1;color:#fff;text-decoration:none;font-weight:600;">
+              Live Demo
+            </a>
+          </div>
+        </div>
+
+        <div class="portfolio-item" tabindex="0" aria-label="Project: E-commerce Store">
+          <div class="portfolio-image" style="background-image: url('https://placehold.co/320x180/28a745/ffffff?text=E-commerce+Store');"></div>
+          <h2 class="portfolio-title">E-commerce Store</h2>
+          <p class="portfolio-description">An online store built with React and Redux. Features product listings, shopping cart, and user authentication.</p>
+          <div class="portfolio-tags">
+            <span class="portfolio-tag">React.js</span>
+            <span class="portfolio-tag">Redux</span>
+            <span class="portfolio-tag">Node.js</span>
+            <a href="https://example.com/ecommerce-store" target="_blank" rel="noopener" class="portfolio-tag" style="background:#6366f1;color:#fff;text-decoration:none;font-weight:600;">
+              Live Demo
+            </a>
+          </div>
+        </div>
+
+        <div class="portfolio-item" tabindex="0" aria-label="Project: Personal Blog">
+          <div class="portfolio-image" style="background-image: url('https://placehold.co/320x180/007bff/ffffff?text=Personal+Blog');"></div>
+          <h2 class="portfolio-title">Personal Blog</h2>
+          <p class="portfolio-description">A blogging platform built with Gatsby and Markdown. Users can create, edit, and delete posts with a clean and modern interface.</p>
+          <div class="portfolio-tags">
+            <span class="portfolio-tag">Gatsby</span>
+            <span class="portfolio-tag">Markdown</span>
+            <span class="portfolio-tag">CSS</span>
+            <a href="https://example.com/personal-blog" target="_blank" rel="noopener" class="portfolio-tag" style="background:#6366f1;color:#fff;text-decoration:none;font-weight:600;">
+              Live Demo
+            </a>
+          </div>
+        </div>
+
+        <div class="portfolio-item" tabindex="0" aria-label="Project: Task Manager">
+          <div class="portfolio-image" style="background-image: url('https://placehold.co/320x180/ff5733/ffffff?text=Task+Manager');"></div>
+          <h2 class="portfolio-title">Task Manager</h2>
+          <p class="portfolio-description">A task management application that allows users to create, update, and delete tasks. Built with Vue.js and Firebase for real-time data.</p>
+          <div class="portfolio-tags">
+            <span class="portfolio-tag">Vue.js</span>
+            <span class="portfolio-tag">Firebase</span>
+            <span class="portfolio-tag">CSS</span>
+            <a href="https://example.com/task-manager" target="_blank" rel="noopener" class="portfolio-tag" style="background:#6366f1;color:#fff;text-decoration:none;font-weight:600;">
+              Live Demo
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+<!-- Include Google Fonts in the head -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+
+    <section id="projects" tabindex="0" aria-label="Portfolio projects section">
+      <h1 class="section-title">My Projects</h1>
+      <div class="search-container" role="search" aria-label="Search portfolio projects">
+        <input type="search" id="project-search" name="project-search" placeholder="Search projects..." aria-describedby="search-desc" />
+        <span class="search-icon material-icons" aria-hidden="true">search</span>
+      </div>
+      <div class="portfolio-grid" id="portfolio-grid" aria-live="polite" aria-relevant="additions removals">
+        <!-- Projects dynamically rendered here -->
+      </div>
+    </section>
+
+
+<section id="certifications" style="padding: 4rem 2rem; max-width: 1200px; margin: 0 auto; animation: fadeIn 1s;">
+  <h1 style="font-size: 2.5rem; margin-bottom: 1rem; text-align: center; color: #e2e8f0; font-family: 'Montserrat', sans-serif;">Certifications / Achievements</h1>
+  <div class="certifications" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin-top: 2rem;">
+    
+    <div class="certification" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.8), rgba(30, 41, 59, 0.7)); border-radius: 12px; padding: 1.5rem; transition: all 0.3s ease; cursor: pointer; font-family: 'Roboto', sans-serif; animation: slideIn 0.5s ease; font-weight: 600;" 
+         onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 15px 30px rgba(99, 102, 241, 0.5)';" 
+         onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+      GDSC GenAI & Cloud Arcade <br> <span style="font-weight: 400; color: #e2e8f0;">(Google Developer Student Clubs)</span>
+    </div>
+    
+    <div class="certification" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.8), rgba(30, 41, 59, 0.7)); border-radius: 12px; padding: 1.5rem; transition: all 0.3s ease; cursor: pointer; font-family: 'Roboto', sans-serif; animation: slideIn 0.5s ease; font-weight: 600;" 
+         onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 15px 30px rgba(99, 102, 241, 0.5)';" 
+         onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+      CCNA: Introduction to Networks <br> <span style="font-weight: 400; color: #e2e8f0;">(Cisco Networking Academy)</span>
+    </div>
+
+    <div class="certification" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.8), rgba(30, 41, 59, 0.7)); border-radius: 12px; padding: 1.5rem; transition: all 0.3s ease; cursor: pointer; font-family: 'Roboto', sans-serif; animation: slideIn 0.5s ease; font-weight: 600;" 
+         onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 15px 30px rgba(99, 102, 241, 0.5)';" 
+         onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+      UiPath Automation Explorer for Students <br> <span style="font-weight: 400; color: #e2e8f0;">(UI Academic Alliance)</span>
+    </div>
+
+    <div class="certification" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.8), rgba(30, 41, 59, 0.7)); border-radius: 12px; padding: 1.5rem; transition: all 0.3s ease; cursor: pointer; font-family: 'Roboto', sans-serif; animation: slideIn 0.5s ease; font-weight: 600;" 
+         onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 15px 30px rgba(99, 102, 241, 0.5)';" 
+         onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+      Freedom AI Masterclass Completion <br> <span style="font-weight: 400; color: #e2e8f0;">(Avinash – Freedom AI)</span>
+    </div>
+    <div class="certification" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.8), rgba(30, 41, 59, 0.7)); border-radius: 12px; padding: 1.5rem; transition: all 0.3s ease; cursor: pointer; font-family: 'Roboto', sans-serif; animation: slideIn 0.5s ease; font-weight: 600;" 
+     onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 15px 30px rgba(99, 102, 241, 0.5)';" 
+     onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+  IEEE Membership / Participation <br> <span style="font-weight: 400; color: #e2e8f0;">(IEEE Computer Society, Madras Section)</span>
+</div><br>
+
+<div style="text-align: center; margin-top: 2rem;">
+ 
+  
+</div>
+
+  </div>
+  <div style="text-align: center; margin-top: 2rem;">
+  <div style="
+      background: rgba(99, 102, 241, 0.1); 
+      border-radius: 12px; 
+      padding: 1rem; 
+      display: inline-block; 
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    "
+    onmouseover="this.style.transform='scale(1.05)';" 
+    onmouseout="this.style.transform='scale(1)';">
+    <a href="https://drive.google.com/drive/folders/13MERPyq1Lmp7CzGix4X3vNmg-9mU4ZlG?usp=drive_link" 
+       target="_blank" 
+       style="font-size: 1rem; color: #93c5fd; text-decoration: underline; font-family: 'Montserrat', sans-serif;">
+      📄 Check all certificates here
+    </a>
+  </div>
+</section>
+
+
+<style>
+  @keyframes slideIn {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+</style>
+<section id="lead-role" style="padding: 4rem 2rem; max-width: 1200px; margin: 0 auto; animation: fadeIn 1s;">
+  <h1 style="font-size: 2.5rem; margin-bottom: 1rem; text-align: center; color: #e2e8f0; font-family: 'Montserrat', sans-serif;">Lead Role</h1>
+  
+  <div class="lead-role" style="background: linear-gradient(135deg, rgba(52, 202, 112, 0.8), rgba(95, 41, 112, 0.8)); border-radius: 12px; padding: 1.5rem; transition: all 0.3s ease; cursor: pointer; font-family: 'Roboto', sans-serif; animation: slideIn 0.5s ease; font-weight: 600;" 
+       onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 15px 30px rgba(52, 202, 112, 0.5)';" 
+       onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+    Role 1: UBA Senior Volunteer <br> <span style="font-weight: 400; color: #e2e8f0;">(Contributed to rural development by organizing awareness drives, surveys, and digital literacy programs under the Unnat Bharat Abhiyan initiative.)</span>
+  </div>
+  
+  <br>
+
+  <div class="lead-role" style="background: linear-gradient(135deg, rgba(95, 41, 112, 0.8), rgba(52, 202, 112, 0.8)); border-radius: 12px; padding: 1.5rem; transition: all 0.3s ease; cursor: pointer; font-family: 'Roboto', sans-serif; animation: slideIn 0.5s ease; font-weight: 600;" 
+       onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 15px 30px rgba(95, 41, 112, 0.5)';" 
+       onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+    Role 2: GDSC Club Member <br> <span style="font-weight: 400; color: #e2e8f0;">(Participated in workshops and projects on web, cloud, and GenAI. Completed Google Cloud Study Jam and earned recognition and swag.)</span>
+  </div>
+</section>
+
+<style>
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+</style>
+
+<style>
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+</style>
+
+
+    <!-- Include Google Fonts in the <head> section of your HTML -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&family=Montserrat:wght@600&display=swap" rel="stylesheet">
+
+<!-- Include Google Fonts in the <head> section of your HTML -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&family=Montserrat:wght@600&display=swap" rel="stylesheet">
+
+<section id="interests" style="padding: 4rem 2rem; max-width: 1200px; margin: 0 auto; animation: fadeIn 1s;">
+  <h1 style="font-size: 2.5rem; margin-bottom: 1rem; text-align: center; color: #e2e8f0; font-family: 'Montserrat', sans-serif;">Areas of Interest</h1>
+  <div class="interests" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin-top: 2rem;">
+    <div class="interest" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.8), rgba(30, 41, 59, 0.7)); border-radius: 12px; padding: 1.5rem; transition: all 0.3s ease; cursor: pointer; font-family: 'Roboto', sans-serif; animation: slideIn 0.5s ease; font-weight: 600;" 
+         onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 15px 30px rgba(99, 102, 241, 0.5)';" 
+         onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+      💻 Video and Photo Editing
+    </div>
+    <div class="interest" style="background: linear-gradient(135deg, rgba(30, 241, 102, 0.8), rgba(30, 41, 59, 0.7)); border-radius: 12px; padding: 1.5rem; transition: all 0.3s ease; cursor: pointer; font-family: 'Roboto', sans-serif; animation: slideIn 0.5s ease; font-weight: 600;" 
+         onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 15px 30px rgba(30, 241, 102, 0.5)';" 
+         onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+      📸 Photography
+    </div>
+    <div class="interest" style="background: linear-gradient(135deg, rgba(241, 102, 30, 0.8), rgba(30, 41, 59, 0.7)); border-radius: 12px; padding: 1.5rem; transition: all 0.3s ease; cursor: pointer; font-family: 'Roboto', sans-serif; animation: slideIn 0.5s ease; font-weight: 600;" 
+         onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 15px 30px rgba(241, 102, 30, 0.5)';" 
+         onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">
+      🚆 Traveling
+    </div>
+    
+  </div>
+</section>
+
+<style>
+  @keyframes slideIn {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+</style>
+
+
+<style>
+  @keyframes slideIn {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+</style>
+
+
+    <section id="contact" tabindex="0" aria-label="Contact Me section">
+        
+      <h1 class="section-title">Get in Touch</h1>
+      <form id="contact-form" novalidate autocomplete="off" aria-describedby="form-desc" aria-live="polite">
+        <p id="form-desc">Please fill out the form to get in touch with me.</p>
+        <label for="name-input">Name <span aria-hidden="true" style="color:#ef4444;">*</span></label>
+        <input
+          type="text"
+          id="name-input"
+          name="name"
+          placeholder="Your full name"
+          autocomplete="name"
+          required
+          aria-required="true"
+          aria-invalid="false"
+          aria-describedby="name-error"
+          minlength="3"
+          maxlength="50"
+        />
+        <div class="error-message" id="name-error" aria-live="assertive"></div>
+        <label for="email-input">Email <span aria-hidden="true" style="color:#ef4444;">*</span></label>
+        <input
+          type="email"
+          id="email-input"
+          name="email"
+          placeholder="your.email@example.com"
+          autocomplete="email"
+          required
+          aria-required="true"
+          aria-invalid="false"
+          aria-describedby="email-error"
+        />
+        <div class="error-message" id="email-error" aria-live
+        ="assertive"></div>
+        <label for="message-input">Message <span aria-hidden="true" style="color:#ef4444;">*</span></label>
+        <textarea
+            id="message-input"
+            name="message"
+            placeholder="Write your message or feedback here..."
+            rows="5"
+            required
+            aria-required="true"
+            aria-invalid="false"
+            aria-describedby="message-error"
+            minlength="10"
+            maxlength="1000"
+        ></textarea>
+        
+        <div class="error-message" id="message-error" aria-live="assertive"></div>
+        <button type="submit" id="submit-btn" aria-label="Send message">Send Message</button>
+
+      </form>
+    </section>
+  </main>
+</div>
+
+<footer role="contentinfo" aria-label="Site footer">
+  <div>&copy; 2025 MyPortfolio. All rights reserved.</div>
+  <div class="footer-social-icons" aria-label="Social media links">
+    <a href="https://github.com/siva8978-s" aria-label="GitHub profile" title="GitHub" target="_blank" rel="noopener">code</a>
+    <a href="https://www.linkedin.com/in/sivakorukonda/" aria-label="LinkedIn profile" title="LinkedIn" target="_blank" rel="noopener">business</a>
+    <a href="https://twitter.com/sivakorukonda" aria-label="Twitter profile" title="Twitter" target="_blank" rel="noopener">alternate_email</a>
+    
+  </div>
+</footer>
+
+<div id="toast-container" aria-live="polite" aria-label="Notification messages"></div>
+
+<script>
+// Portfolio data
+const portfolioData = [
+  {
+    id: 1,
+    title: "Future Carrer Navigator",
+    description: "It is a web-based application designed to help students explore various career opportunities after completing their education. Whether you're in high school, college, or recently graduated, this tool provides guidance by suggesting potential paths based on your interests and field of study",
+    image: "https://placehold.co/320x180/6366f1/ffffff?text=FUTURE CARRER NAVIGATOR",
+    tags: ["HTML","CSS","React"],
+    link: "https://career-navigator1.vercel.app/"
+  },
+  {
+    id: 2,
+    title: "Age Calculator",
+    description: "A simple and responsive age calculator web app that lets users input their date of birth to instantly calculate their age. It features a modern UI, real-time results, and smooth visual transitions for an engaging user experience.",
+    image: "https://placehold.co/320x180/14b8a6/ffffff?text=Age+Calculator
+    ",
+    tags: ["HTML", "CSS", "JavaScript"],
+    link: "https://age-calculator-pearl-seven.vercel.app"
+  },
+  {
+    id: 3,
+    title: "Weather Dashboard",
+    description: "A responsive weather dashboard with location-based forecasts, interactive maps, and weather alerts.",
+    image: "https://placehold.co/320x180/f59e0b/ffffff?text=Weather+App",
+    tags: ["JavaScript", "OpenWeather API", "Chart.js"],
+    link: "https://example.com/weather"
+  },
+  {
+    id: 4,
+    title: "Blog Platform",
+    description: "A modern blog platform with markdown support, commenting system, and SEO optimization.",
+    image: "https://placehold.co/320x180/ef4444/ffffff?text=Blog+Platform",
+    tags: ["Next.js", "Tailwind CSS", "Contentful", "Vercel"],
+    link: "https://example.com/blog"
+  },
+  {
+    id: 5,
+    title: "Portfolio Website",
+    description: "A responsive portfolio website showcasing projects with smooth animations and modern design.",
+    image: "https://placehold.co/320x180/8b5cf6/ffffff?text=Portfolio",
+    tags: ["HTML5", "CSS3", "JavaScript", "GSAP"],
+    link: "https://example.com/portfolio"
+  },
+  {
+    id: 6,
+    title: "Chat Application",
+    description: "Real-time chat application with private messaging, group chats, and file sharing capabilities.",
+    image: "https://placehold.co/320x180/10b981/ffffff?text=Chat+App",
+    tags: ["React", "Socket.io", "Firebase", "Material-UI"],
+    link: "https://example.com/chat"
+  }
+];
+
+// App state
+let currentTheme = 'dark';
+let filteredProjects = [...portfolioData];
+
+// DOM elements
+const themeToggle = document.getElementById('toggle-theme');
+const sidebarToggle = document.getElementById('sidebar-toggle');
+const sidebar = document.getElementById('sidebar');
+const searchInput = document.getElementById('project-search');
+const portfolioGrid = document.getElementById('portfolio-grid');
+const dashboardGrid = document.getElementById('dashboard-portfolio-grid');
+const contactForm = document.getElementById('contact-form');
+const toastContainer = document.getElementById('toast-container');
+
+// Initialize app
+document.addEventListener('DOMContentLoaded', function() {
+  initializeApp();
+});
+
+function initializeApp() {
+  renderPortfolio();
+  setupEventListeners();
+  updateThemeIcon();
+  
+  // Show welcome toast
+  showToast('Welcome to my portfolio!', 'info');
+}
+
+function setupEventListeners() {
+  // Theme toggle
+  themeToggle.addEventListener('click', toggleTheme);
+  
+  // Sidebar toggle for mobile
+  sidebarToggle.addEventListener('click', toggleSidebar);
+  
+  // Search functionality
+  searchInput.addEventListener('input', handleSearch);
+  
+  // Navigation
+  setupNavigation();
+  
+  // Contact form
+  contactForm.addEventListener('submit', handleContactSubmit);
+  
+  // Close sidebar when clicking outside on mobile
+  document.addEventListener('click', function(e) {
+    if (window.innerWidth <= 639 && !sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+      closeSidebar();
+    }
+  });
+  
+  // Handle window resize
+  window.addEventListener('resize', function() {
+    if (window.innerWidth > 639) {
+      sidebar.classList.remove('open');
+      sidebarToggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+}
+
+function toggleTheme() {
+  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  document.body.setAttribute('data-theme', currentTheme);
+  updateThemeIcon();
+  showToast(`Switched to ${currentTheme} theme`, 'success');
+}
+
+function updateThemeIcon() {
+  themeToggle.textContent = currentTheme === 'dark' ? 'wb_sunny' : 'nights_stay';
+  themeToggle.setAttribute('aria-label', `Switch to ${currentTheme === 'dark' ? 'light' : 'dark'} theme`);
+}
+
+function toggleSidebar() {
+  const isOpen = sidebar.classList.toggle('open');
+  sidebarToggle.setAttribute('aria-expanded', isOpen);
+  sidebarToggle.textContent = isOpen ? 'close' : 'menu';
+}
+
+function closeSidebar() {
+  sidebar.classList.remove('open');
+  sidebarToggle.setAttribute('aria-expanded', 'false');
+  sidebarToggle.textContent = 'menu';
+}
+
+function setupNavigation() {
+  // Header navigation
+  const headerNavLinks = document.querySelectorAll('nav.nav-main a');
+  headerNavLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('href').substring(1);
+      scrollToSection(targetId);
+    });
+  });
+  
+  // Sidebar navigation
+  const sidebarNavButtons = document.querySelectorAll('.sidebar nav button');
+  sidebarNavButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const targetSection = this.getAttribute('data-section');
+      scrollToSection(targetSection);
+      if (window.innerWidth <= 639) {
+        closeSidebar();
+      }
+    });
+  });
+}
+
+function scrollToSection(sectionId) {
+  const targetSection = document.getElementById(sectionId);
+  if (targetSection) {
+    targetSection.scrollIntoView({ 
+      behavior: 'smooth',
+      block: 'start'
+    });
+    targetSection.focus();
+  }
+}
+
+function handleSearch() {
+  const searchTerm = searchInput.value.toLowerCase().trim();
+  
+  if (searchTerm === '') {
+    filteredProjects = [...portfolioData];
+  } else {
+    filteredProjects = portfolioData.filter(project => 
+      project.title.toLowerCase().includes(searchTerm) ||
+      project.description.toLowerCase().includes(searchTerm) ||
+      project.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+    );
+  }
+  
+  renderPortfolio();
+  
+  if (filteredProjects.length === 0) {
+    showToast('No projects found matching your search', 'warning');
+  }
+}
+
+function renderPortfolio() {
+  portfolioGrid.innerHTML = '';
+  
+  if (filteredProjects.length === 0) {
+    portfolioGrid.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 48px; color: var(--text-muted);">
+        <span class="material-icons" style="font-size: 64px; margin-bottom: 16px;">search_off</span>
+        <p style="font-size: 1.2rem; margin: 0;">No projects found</p>
+      </div>
+    `;
+    return;
+  }
+  
+  filteredProjects.forEach(project => {
+    const projectElement = createProjectElement(project);
+    portfolioGrid.appendChild(projectElement);
+  });
+}
+
+function createProjectElement(project) {
+  const projectDiv = document.createElement('div');
+  projectDiv.className = 'portfolio-item';
+  projectDiv.tabIndex = 0;
+  projectDiv.setAttribute('aria-label', `Project: ${project.title}`);
+  
+  projectDiv.innerHTML = `
+    <div class="portfolio-image" style="background-image: url('${project.image}');"></div>
+    <h2 class="portfolio-title">${project.title}</h2>
+    <p class="portfolio-description">${project.description}</p>
+    <div class="portfolio-tags">
+      ${project.tags.map(tag => `<span class="portfolio-tag">${tag}</span>`).join('')}
+      <a href="${project.link}" target="_blank" rel="noopener" class="portfolio-tag" style="background:#6366f1;color:#fff;text-decoration:none;font-weight:600;">
+        Live Demo
+      </a>
+    </div>
+  `;
+  
+  // Add click event
+  projectDiv.addEventListener('click', function() {
+    window.open(project.link, '_blank', 'noopener');
+  });
+  
+  // Add keyboard navigation
+  projectDiv.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      window.open(project.link, '_blank', 'noopener');
+    }
+  });
+  
+  return projectDiv;
+}
+
+function handleContactSubmit(e) {
+  e.preventDefault();
+  
+  const formData = new FormData(contactForm);
+  const name = formData.get('name').trim();
+  const email = formData.get('email').trim();
+  const message = formData.get('message').trim();
+  
+  // Clear previous errors
+  clearFormErrors();
+  
+  // Validate form
+  let hasErrors = false;
+  
+  if (!name || name.length < 3) {
+    showFieldError('name-error', 'Name must be at least 3 characters long');
+    hasErrors = true;
+  }
+  
+  if (!email || !isValidEmail(email)) {
+    showFieldError('email-error', 'Please enter a valid email address');
+    hasErrors = true;
+  }
+  
+  if (!message || message.length < 10) {
+    showFieldError('message-error', 'Message must be at least 10 characters long');
+    hasErrors = true;
+  }
+  
+  if (hasErrors) {
+    showToast('Please fix the errors in the form', 'error');
+    return;
+  }
+  
+  // Simulate form submission
+  const submitBtn = document.getElementById('submit-btn');
+  const originalText = submitBtn.textContent;
+  
+  submitBtn.textContent = 'Sending...';
+  submitBtn.disabled = true;
+  
+  setTimeout(() => {
+    submitBtn.textContent = originalText;
+    submitBtn.disabled = false;
+    contactForm.reset();
+    showToast('Message sent successfully! I\'ll get back to you soon.', 'success');
+  }, 2000);
+}
+
+function clearFormErrors() {
+  const errorElements = document.querySelectorAll('.error-message');
+  errorElements.forEach(element => {
+    element.textContent = '';
+  });
+  
+  const inputs = contactForm.querySelectorAll('input, textarea');
+  inputs.forEach(input => {
+    input.setAttribute('aria-invalid', 'false');
+    input.style.borderColor = '#475569';
+  });
+}
+
+function showFieldError(errorId, message) {
+  const errorElement = document.getElementById(errorId);
+  const inputElement = document.querySelector(`[aria-describedby="${errorId}"]`);
+  
+  if (errorElement) {
+    errorElement.textContent = message;
+  }
+  
+  if (inputElement) {
+    inputElement.setAttribute('aria-invalid', 'true');
+    inputElement.style.borderColor = '#ef4444';
+  }
+}
+
+function isValidEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+function showToast(message, type = 'info') {
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.setAttribute('role', 'alert');
+  toast.setAttribute('aria-live', 'assertive');
+  
+  const iconMap = {
+    success: 'check_circle',
+    error: 'error',
+    warning: 'warning',
+    info: 'info'
+  };
+  
+  toast.innerHTML = `
+    <span class="material-icons" aria-hidden="true">${iconMap[type] || 'info'}</span>
+    <span>${message}</span>
+  `;
+  
+  toastContainer.appendChild(toast);
+  
+  // Auto remove toast
+  setTimeout(() => {
+    if (toast.parentNode) {
+      toast.style.animation = 'slideOutRight 0.4s cubic-bezier(0.4,0,0.2,1)';
+      setTimeout(() => {
+        if (toast.parentNode) {
+          toastContainer.removeChild(toast);
+        }
+      }, 400);
+    }
+  }, 3200);
+}
+
+// Add slide out animation
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideOutRight {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+  }
+`;
+document.head.appendChild(style);
+</script>
+
+</body>
+</html>
